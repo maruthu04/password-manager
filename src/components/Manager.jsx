@@ -195,19 +195,15 @@ const Manager = () => {
                         </div>
                       </td>
                       <td className="py-2 text-center w-32 border border-white">
-                        <div className="flex justify-center items-center gap-1">
-                          <span>
-                            <lord-icon
-                              src="https://cdn.lordicon.com/qawxkplz.json"
-                              trigger="hover"
-                              style={{"width":"25px", "height":"25px"}}
-                            ></lord-icon>
+                        <div className="flex justify-center items-center gap-2">
+                          <span className="mb-1">
+                            <img width={16} src="./edit.png" alt="" />
                           </span>
                           <span>
                             <lord-icon
                               src="https://cdn.lordicon.com/xyfswyxf.json"
                               trigger="hover"
-                              style={{"width":"25px", "height":"25px"}}
+                              style={{"width":"20px", "height":"20px"}}
                             ></lord-icon>
                           </span>
                         </div>
