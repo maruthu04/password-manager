@@ -2,6 +2,7 @@ import React from "react";
 import { useRef, useState, useEffect } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid';
 
 const Manager = () => {
   const ref = useRef();
@@ -31,17 +32,90 @@ const Manager = () => {
   };
 
   const savePassword = () => {
-    setpasswordArray([...passwordArray, form]);
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
+    const site = form.site.trim();
+    const username = form.username.trim();
+    const password = form.password.trim();
+    const exists = passwordArray.some(p => p.site === site && p.username === username);
+  if (exists) {
+    toast.info("An entry for this site and username already exists.", {
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    } );
+    return;
+  }
+    if (!site) {
+    toast.error("Please enter website URL.",{
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    } );
+    return;
+  }
+  if (!username) {
+    toast.error("Please enter username / email.", {
+        autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    return;
+  }
+  if (!password) {
+    toast.error("Please enter password.", {
+      autoClose: 1000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    return;
+  }
+  
+    setpasswordArray([...passwordArray, {...form, id:uuidv4()}]);
+    localStorage.setItem("passwords", JSON.stringify([...passwordArray, {...form, id:uuidv4()}]));
     console.log([...passwordArray, form]);
+    setform({site:"", username:"", password:""});
   };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      savePassword();
+    }
+  }
+
+  const editPassword = (id) => {
+    console.log("editing password with id:" + id);
+    setform(passwordArray.filter(item => item.id === id)[0]);
+    setpasswordArray(passwordArray.filter(item=>item.id !== id));
+  }
+
+  const deletePassword = (id) => {
+    if(confirm("Are you sure you want to delete this password?")){
+    console.log("deleting password with id:" + id);
+    setpasswordArray(passwordArray.filter(item => item.id !== id));
+    localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => item.id !== id)));
+  }}
 
   const handleChange = (e) => {
     setform({ ...form, [e.target.name]: e.target.value });
   };
 
   const copyText = (text) => {
-    toast("🦄 Wow so easy!", {
+    toast("copied to clipboard!", {
       position: "top-right",
       autoClose: 1000,
       hideProgressBar: false,
@@ -55,7 +129,7 @@ const Manager = () => {
   };
 
   return (
-    <>
+    <div>
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -71,6 +145,8 @@ const Manager = () => {
       <div className="absolute inset-0 -z-10 h-full w-full bg-pink-50 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-pink-400 opacity-20 blur-[100px]"></div>
       </div>
+    
+      
 
       <div className="max-w-4xl mx-auto mt-16">
         <h1 className="text-center text-2xl font-semibold">
@@ -82,7 +158,7 @@ const Manager = () => {
           Your own Password Manager
         </p>
         <div className="text-black flex flex-col p-4 gap-3">
-          <input
+          <input onKeyDown={handleKeyPress}
             value={form.site}
             onChange={handleChange}
             placeholder="Enter Website URL"
@@ -92,7 +168,7 @@ const Manager = () => {
             id="site"
           />
           <div className="flex gap-2">
-            <input
+            <input onKeyDown={handleKeyPress}
               value={form.username}
               onChange={handleChange}
               placeholder="Enter Username/Email"
@@ -102,7 +178,7 @@ const Manager = () => {
               id="username"
             />
             <div className="relative w-[47%]">
-              <input
+              <input onKeyDown={handleKeyPress}
                 ref={passwordRef}
                 value={form.password}
                 onChange={handleChange}
@@ -128,14 +204,14 @@ const Manager = () => {
               src="https://cdn.lordicon.com/efxgwrkc.json"
               trigger="hover"
             ></lord-icon>
-            <button>Add Password</button>
+            <button>Save Password</button>
           </div>
         </div>
         <div className="passwords">
           <h2 className="font-bold text-2xl">Your Passwords</h2>
           {passwordArray.length === 0 && <div>No Passwords Saved Yet!</div>}
           {passwordArray.length != 0 && (
-            <table className="table-auto w-full items-center rounded-md overflow-hidden mt-4">
+            <table className="table-auto w-full items-center rounded-md mt-4">
               <thead className="bg-pink-600 text-white">
                 <tr>
                   <th className="py-1">Site</th>
@@ -196,10 +272,17 @@ const Manager = () => {
                       </td>
                       <td className="py-2 text-center w-32 border border-white">
                         <div className="flex justify-center items-center gap-2">
-                          <span className="mb-1">
+                          <span className="mb-1" onClick={()=>{editPassword(item.id)}}>
                             <img width={16} src="./edit.png" alt="" />
                           </span>
-                          <span>
+                          {/* <span onClick={()=>{editPassword(item.id)}}>
+                            <lord-icon
+                              src="https://cdn.lordicon.com/fikcyfpp.json"
+                              trigger="hover"
+                              style={{"width":"22px", "height":"22px"}}
+                            ></lord-icon>
+                          </span> */}
+                          <span onClick={()=>{deletePassword(item.id)}}>
                             <lord-icon
                               src="https://cdn.lordicon.com/xyfswyxf.json"
                               trigger="hover"
@@ -216,7 +299,7 @@ const Manager = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

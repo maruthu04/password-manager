@@ -9,8 +9,11 @@ function App() {
 
   return (
     <>
+    
       <Navbar />
+      <div className='min-h-[calc(100vh-247px)]'>
       <Manager />
+      </div>
       <Footer />
     </>
   )
