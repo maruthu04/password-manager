@@ -11,7 +11,7 @@ function App() {
     <>
     
       <Navbar />
-      <div className='min-h-[calc(100vh-247px)]'>
+      <div className='min-h-[calc(100vh-216px)]'>
       <Manager />
       </div>
       <Footer />
