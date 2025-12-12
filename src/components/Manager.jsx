@@ -111,7 +111,9 @@ const Manager = () => {
       localStorage.setItem(
         "passwords",
         JSON.stringify(passwordArray.filter((item) => item.id !== id))
+        
       );
+      toast.success("Password Deleted");
     }
   };
 
@@ -120,7 +122,7 @@ const Manager = () => {
   };
 
   const copyText = (text) => {
-    toast("copied to clipboard!", {
+    toast.success("copied to clipboard!", {
       position: "top-right",
       autoClose: 1000,
       hideProgressBar: false,
@@ -164,7 +166,7 @@ const Manager = () => {
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-pink-400 opacity-20 blur-[100px]"></div>
       </div>
 
-      <div className="max-w-4xl mx-auto mt-8 px-2 md:px-0">
+      <div className="max-w-4xl mx-auto mt-8 px-2 md:px-0 cursor-pointer">
         <h1 className="text-center text-2xl font-semibold">
           <span className="text-pink-800">&lt;</span>
           Pass
@@ -180,7 +182,7 @@ const Manager = () => {
             value={form.site}
             onChange={handleChange}
             placeholder="Enter Website URL"
-            className="rounded-full border border-pink-500 p-1 px-4 m-1 w-full"
+            className="rounded-full border border-pink-500 p-1 px-4 m-1 w-full focus:outline-pink-600"
             type="text"
             name="site"
             id="site"
@@ -191,7 +193,7 @@ const Manager = () => {
               value={form.username}
               onChange={handleChange}
               placeholder="Enter Username/Email"
-              className="rounded-full border border-pink-500 p-1 px-4 m-1 w-full md:w-1/2"
+              className="rounded-full border border-pink-500 p-1 px-4 m-1 w-full md:w-1/2 focus:outline-pink-500"
               type="text"
               name="username"
               id="username"
@@ -203,7 +205,7 @@ const Manager = () => {
                 value={form.password}
                 onChange={handleChange}
                 placeholder="Enter Password"
-                className="rounded-full border border-pink-500 p-1 px-4 m-1 w-full"
+                className="rounded-full border border-pink-500 p-1 px-4 m-1 w-full focus:outline-pink-500 "
                 type="password"
                 name="password"
                 id="password"
